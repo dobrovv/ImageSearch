@@ -18,36 +18,21 @@ class MonoPixmap
 {
     UInt width;
     UInt height;
-    Byte *  data;
+    Byte * data;
 
 public:
-    MonoPixmap(UInt width = 256, UInt height = 256, Byte * data = nullptr)
-        :width(width), height(height), data(data)
-    {  std::cout << "Create" << &data << std::flush;}
+    MonoPixmap(UInt width = 256, UInt height = 256, Byte * data = nullptr);
 
-    MonoPixmap(const MonoPixmap &other) { std::cout << "Copy Ctor" << std::flush;}
-/*
-    MonoPixmap(MonoPixmap && other) {
-        this->width = other.width;
-        this->height = other.height;
-        this->data = other.data;
-
-        other.width = other.height = 0;
-        other.data = nullptr;
-
-        std::cout << "Move" << std::flush;
-
-    }*/
-
-    ~MonoPixmap() {
-        delete[] data;
-    }
+    MonoPixmap(MonoPixmap && other);
+    MonoPixmap(const MonoPixmap & other);
+    MonoPixmap & operator = (const MonoPixmap &);
+    ~MonoPixmap();
 
     inline UInt h() const { return height; }
     inline UInt w() const { return width; }
-    //inline const Byte *data_ptr() const { return data; }
+    inline const Byte * data_ptr() const { return data; }
 
-    void setPixel(UInt x, UInt y, UInt pixval) {
+    inline void setPixel(UInt x, UInt y, UInt pixval) {
         data[x+y*width] = pixval;
     }
 
@@ -57,29 +42,9 @@ public:
 
     /// Returns a new MonoPixmap containing a subregion of image's pixels
     /// No boundary checks
-    MonoPixmap region (UInt x, UInt y, UInt rwidth, UInt rheight) {
-        Byte * rdata = new Byte[rwidth*rheight];
+    MonoPixmap region (UInt x, UInt y, UInt rwidth, UInt rheight);
 
-
-        for ( UInt row = 0; row < rheight; row++ )
-            // copy a row of the source image clipped to [x ... rwidth]
-            memcpy(&rdata[row*rwidth], &data[x+(y+row)*width], rwidth);
-
-        return MonoPixmap(rwidth, rheight, rdata);
-    }
-
-    string toString() const {
-        string str;
-        for ( UInt y = 0; y < height; y++ ) {
-            str += '[';
-            for ( UInt x = 0; x < width; x++ ) {
-                str += std::to_string(pixel(x,y));
-                str += (x+1 == width ? "]" : ", ");
-            }
-            str += "\n";
-        }
-        return str;
-    }
+    string toString() const;
 };
 
 #endif // MONOPIXMAP_H

@@ -27,8 +27,43 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     Preprocessing/ImageConverter.cpp \
+    MonoPixmap.cpp \
+    Preprocessing/ImageConverter.cpp \
+    main.cpp \
     MonoPixmap.cpp
 
 HEADERS += \
     Preprocessing/ImageConverter.h \
+    MonoPixmap.h \
+    Preprocessing/ImageConverter.h \
     MonoPixmap.h
+
+SUBDIRS += \
+    ImageSearch.pro
+
+DISTFILES += \
+    images/architecture1.jpg \
+    images/architecture_2.jpg \
+    images/bamarket115.jpg \
+    images/black.jpg \
+    images/butterflywallpaper.jpg \
+    images/Chang_PermanentMidnightintheChairofJasperJohns_large.jpg \
+    images/damien_hirst.jpg \
+    images/damien_hirst_does_fashion_week.jpg \
+    images/damien_hirst_virgin_mother.jpg \
+    images/damienhirst.jpg \
+    images/dhirst_a3b9ddea.jpg \
+    images/diamondskull.jpg \
+    images/doodle.jpg \
+    images/england.jpg \
+    images/englandpath.jpg \
+    images/Hhirst_BGE.jpg \
+    images/jasper_johns.jpg \
+    images/johns_portrait_380x311.jpg \
+    images/latrobe.jpg \
+    images/red.jpg \
+    images/Scotland_castle_wedding.jpg \
+    images/targetjasperjohns.jpg \
+    images/Tower-Bridge-at-night--London--England_web.jpg \
+    images/uk-golf-scotland.jpg \
+    images/wallacestevens.jpg
