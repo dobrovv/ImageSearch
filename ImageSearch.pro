@@ -25,16 +25,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-    Preprocessing/ImageConverter.cpp \
-    MonoPixmap.cpp \
     Preprocessing/ImageConverter.cpp \
     main.cpp \
     MonoPixmap.cpp
 
 HEADERS += \
-    Preprocessing/ImageConverter.h \
-    MonoPixmap.h \
     Preprocessing/ImageConverter.h \
     MonoPixmap.h
 

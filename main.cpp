@@ -1,13 +1,21 @@
 #include "MonoPixmap.h"
+#include "Preprocessing/ImageConverter.h"
 
-int main() {
-    MonoPixmap m;
-    m = MonoPixmap(3, 3, new Byte[3*3]);
-    m.setPixel(0,0,1);
-    m.setPixel(1,0,5);
-    m.setPixel(0,1,3);
-    m.setPixel(1,1,4);
+#include <QtGui>
+#include <QtWidgets>
+#include <QLabel>
 
-    std::cout << m.toString();
+using namespace std;
 
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+
+    QLabel lbl;
+    QImage img = toQImage("images/architecture_2.jpg");
+    MonoPixmap mp = toMonoPixmap(img);
+    img = toQImage(mp);
+    lbl.setPixmap(QPixmap::fromImage(img));
+    lbl.show();
+
+    return app.exec();
 }
