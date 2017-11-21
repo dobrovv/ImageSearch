@@ -1,4 +1,4 @@
-#include "MonoPixmap.h"
+#include "ImageDB.h"
 #include "Preprocessing/ImageConverter.h"
 
 #include <QtGui>
@@ -11,10 +11,12 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     QLabel lbl;
-    QImage img = toQImage("images/architecture_2.jpg");
-    MonoPixmap mp = toMonoPixmap(img);
-    img = toQImage(mp);
-    lbl.setPixmap(QPixmap::fromImage(img));
+    MonoPixmap mp = toMonoPixmap("images/architecture_2.jpg");
+
+    Hashcode h = ImageDB::hash(mp);
+    std::cout << h.count() << " " << h << std::endl;
+
+    lbl.setPixmap(QPixmap::fromImage(toQImage(mp)));
     lbl.show();
 
     return app.exec();

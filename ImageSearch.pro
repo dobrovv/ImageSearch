@@ -27,11 +27,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Preprocessing/ImageConverter.cpp \
     main.cpp \
-    MonoPixmap.cpp
+    MonoPixmap.cpp \
+    ImageDB.cpp
 
 HEADERS += \
     Preprocessing/ImageConverter.h \
-    MonoPixmap.h
+    MonoPixmap.h \
+    ImageDB.h
 
 SUBDIRS += \
     ImageSearch.pro
