@@ -23,9 +23,11 @@ class MonoPixmap
 public:
     MonoPixmap(UInt width = 256, UInt height = 256, Byte * data = nullptr);
 
-    MonoPixmap(MonoPixmap && other);
     MonoPixmap(const MonoPixmap & other);
+    MonoPixmap(MonoPixmap && other);
     MonoPixmap & operator = (const MonoPixmap &);
+    MonoPixmap & operator = ( MonoPixmap &&);
+
     ~MonoPixmap();
 
     inline UInt h() const { return height; }
