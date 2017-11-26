@@ -28,8 +28,6 @@ MonoPixmap::MonoPixmap(MonoPixmap && other) {
     other.width = other.height = 0;
     other.data = nullptr;
 
-    std::cout << "Ctor Moved" << std::flush;
-
 }
 
 MonoPixmap &MonoPixmap::operator =(const MonoPixmap & other)

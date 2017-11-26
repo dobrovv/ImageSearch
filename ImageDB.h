@@ -20,6 +20,7 @@ public:
 
 private:
     static double getBlockMeanPixel(const MonoPixmap & image, UInt x, UInt y, UInt block_width, UInt block_height);
+
 };
 
 #endif // IMAGEDB_H

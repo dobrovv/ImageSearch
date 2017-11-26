@@ -28,12 +28,14 @@ SOURCES += \
     Preprocessing/ImageConverter.cpp \
     main.cpp \
     MonoPixmap.cpp \
-    ImageDB.cpp
+    ImageDB.cpp \
+    SearchTree.cpp
 
 HEADERS += \
     Preprocessing/ImageConverter.h \
     MonoPixmap.h \
-    ImageDB.h
+    ImageDB.h \
+    SearchTree.h
 
 SUBDIRS += \
     ImageSearch.pro
