@@ -3,101 +3,205 @@
 
 #include <cstdint>
 #include <vector>
-using UInt = std::uint32_t;
+#include <iostream>
+#include <sstream>
+#include <iterator>
+
+using namespace std;
+using Value = int;
 using std::vector;
 
-typedef int Key;
-typedef int Value;
+class BPNode {
+public:
+    friend class BPTree;
 
-class SearchTree
-{
+    int d;  // branching factor
+    bool isLeaf;
+
+    vector<int> keys;
+
+    BPNode * parent;
+    vector<BPNode*> kids; // child nodes
+
+    // TODO? : these parameters can be stored in kids vector
+    BPNode * next;  // explicit pointer to the next leaf node
+    vector<Value> vals;  // associated leaf values
 
 public:
-    struct Node {
-        Key key;
-        Value val;
-        Node * left, * right;
-        int N;
-        Node(Key key, Value val, int N)
-            : key(key), val(val), left(nullptr), right(nullptr), N(N)
-        {}
-    };
+    BPNode( bool isLeaf = false, BPNode* parent = nullptr, int d = 4)
+        : d(d), isLeaf(isLeaf), parent(parent), next(nullptr)
+    {
+        keys.reserve(d-1);
+        kids.reserve(d);
 
-    Node * root;
+        if ( isLeaf ) {
+            vals.reserve(d-1);
+        }
+    }
+
+    bool isFull() { return keys.size() >= d-1; }
+
+    BPNode * search(int k)
+    {
+        if ( isLeaf )
+            return this;
+
+        // Find the first key greater than k
+        int i = 0;
+        while (i < keys.size() && keys[i] <= k )
+            i++;
+
+        // Go to the appropriate child
+        return kids[i]->search(k);
+    }
+
+
+    // A utility function to insert a new key in this leaf node
+    // The assumption is, the node must be non-full when this
+    // function is called
+    int insertNonFullLeaf(int k, const Value& val)
+    {
+        // Initialize index as index of rightmost element
+        int i = keys.size()-1;
+
+        // Finds the location of new key to be inserted
+        while (i >= 0 && keys[i] > k)
+            i--;
+        i += 1;
+
+        keys.insert(keys.begin()+i,k);
+        vals.insert(vals.begin()+i,val);
+
+        return i;
+    }
+
+    void insertFullLeaf(int k, const Value& val)
+    {
+        insertNonFullLeaf(k, val);
+
+        // Split the node
+        BPNode * new_node  = new BPNode(true, parent, d);
+        new_node->next = this;
+
+        for ( int i = 0; i < d/2; i++ ) {
+            new_node->keys.push_back(keys[0]);
+            new_node->vals.push_back(vals[0]);
+            keys.erase(keys.begin());
+            vals.erase(vals.begin());
+        }
+
+        if ( parent == nullptr ) {
+            parent = new BPNode(false, nullptr, d);
+            new_node->parent = parent;
+            parent->keys.push_back(keys[0]);
+            parent->kids.push_back(new_node);
+            parent->kids.push_back(this);
+
+        } else if ( !parent->isFull() ) {
+            parent->insertNonFullNode(keys[0], new_node);
+        } else {
+            parent->insertFullNode(keys[0], new_node);
+        }
+    }
+
+    // A utility function to insert a new key in this inner node
+    // The assumption is, the node must be non-full when this
+    // function is called
+    int insertNonFullNode(int k, BPNode * child)
+    {
+        // Initialize index as index of rightmost element
+        int i = keys.size()-1;
+
+        // Finds the location of new key to be inserted
+        while (i >= 0 && keys[i] > k)
+            i--;
+        i += 1;
+
+        keys.insert(keys.begin()+i, k);
+        kids.insert(kids.begin()+i, child);
+
+        return i;
+    }
+
+    void insertFullNode(int k, BPNode * child)
+    {
+        insertNonFullNode(k, child);
+
+        // Split the node
+        BPNode * new_node  = new BPNode(false, parent, d);
+        new_node->next = this;
+
+        for ( int i = 0; i < d/2; i++ ) {
+            new_node->keys.push_back(keys[0]);
+            new_node->kids.push_back(kids[0]);
+            keys.erase(keys.begin());
+            kids.erase(kids.begin());
+        }
+
+        if ( parent == nullptr ) {
+            parent = new BPNode(false, nullptr, d);
+            new_node->parent = parent;
+            parent->keys.push_back(keys[0]);
+            parent->kids.push_back(new_node);
+            parent->kids.push_back(this);
+        } else if ( !parent->isFull() ) {
+            parent->insertNonFullNode(keys[0], new_node);
+        } else {
+            parent->insertFullNode(keys[0], new_node);
+        }
+
+        // remove the copied up key from the child
+        keys.erase(keys.begin());
+    }
+
+    string toString() {
+        std::stringstream result;
+        result << "{";
+        for ( int i  = 0; i < keys.size(); ++i ) {
+            if ( !isLeaf )
+                result << kids[i]->toString() << " " <<  keys[i] << " ";
+            else
+                //result << keys[i] << ": " << vals[i] << ((i == keys.size() -1 ) ? "" : ", ");
+                result << keys[i] << "*" << ((i == keys.size() -1 ) ? "" : ", ");
+        }
+
+        if ( !isLeaf )
+            result << kids[keys.size()]->toString();
+        result << "}";
+        return result.str();
+    }
+
+};
+
+class BPTree {
+public:
+    int d;
+    BPNode * root;
 
 public:
-
-    SearchTree()
-        : root(nullptr)
-    {}
-
-    size_t size() {
-        return size(root);
+    BPTree(int branching_factor=4)
+        : d(branching_factor) {
+        root = new BPNode(true, nullptr, d);
     }
 
-    size_t size(Node * node) {
-        return node == nullptr ? 0 : node->N;
+//private:
+
+    BPNode * search(int k) {
+        return root->search(k);
     }
 
-    Value get(Key key) {
-        return get(root, key);
-    }
+    void insert(int k, const Value & val) {
+        BPNode * leafNode = search(k);
 
-    void put(Key key, Value val) {
-        root = put(root, key, val);
-    }
+        // If the leaf node is not full
+        if ( !leafNode->isFull() ) {
+            leafNode->insertNonFullLeaf(k, val);
+        } else {
+            leafNode->insertFullLeaf(k, val);
+        }
 
-    vector<Node *> rangeSearch(Key lo, Key hi) {
-        vector<Node *> result;
-        rangeSearch(root, result, lo, hi);
-        return result;
-    }
-
-private:
-
-    Value get(Node * node, Key key)
-    {
-        if ( node == nullptr )
-            return Value{};
-
-        if ( key < node->key )
-            return get(node->left, key);
-        else if ( node->key < key )
-            return get(node->right, key);
-        else
-            return node->val;
-    }
-
-    Node * put(Node * x, Key key, Value val)
-    {
-        if ( x == nullptr )
-            return new Node(key, val, 1);
-
-        if ( key < x->key )
-            x->left = put(x->left, key, val);
-        else if ( x->key < key )
-            x->right = put(x->right, key, val);
-        else
-            x->val = val;
-
-        x->N = size(x->left) + size(x->right) + 1;
-
-        return x;
-    }
-
-    void rangeSearch(Node * x, vector<Node*>& result, Key lo, Key hi) {
-
-        if ( x == nullptr )
-            return;
-
-        if ( lo < x->key )
-            rangeSearch(x->left, result, lo, hi);
-
-        if ( lo <= x->key && x->key <= hi )
-            result.push_back(x);
-
-        if ( x->key < hi )
-            rangeSearch(x->right, result, lo, hi);
+        while(root->parent != nullptr)
+            root = root->parent;
     }
 };
 

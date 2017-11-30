@@ -24,13 +24,20 @@ int main(int argc, char *argv[]) {
 
 //    return app.exec();
 
-    SearchTree st;
-    st.put(2,2);
-    st.put(1,1);
-    st.put(3,3);
-    st.put(4,3);
-    st.put(5,3);
-    st.put(6,3);
-    st.put(7,3);
-    cout << st.rangeSearch(2,6).size() << endl;
+    BPTree t;
+    t.insert(1, 101);
+    t.insert(4, 101);
+    t.insert(16, 116);
+    t.insert(25, 125);
+    t.insert(9, 109);
+    t.insert(20, 109);
+    t.insert(13, 109);
+    t.insert(15, 109);
+    t.insert(10, 109);
+    t.insert(11, 109);
+    t.insert(12, 109);
+    //t.insert(12, 109);
+
+
+    cout << t.root->toString() << endl;
 }
