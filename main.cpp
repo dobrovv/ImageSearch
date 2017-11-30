@@ -35,9 +35,11 @@ int main(int argc, char *argv[]) {
     t.insert(15, 109);
     t.insert(10, 109);
     t.insert(11, 109);
-    cout << t.root->toString() << endl;
-
     t.insert(12, 109);
+    t.insert(5, 109);
+    t.insert(6, 109);
+    t.insert(7, 109);
+    t.insert(8, 109);
 
     cout << t.root->toString() << endl;
 }

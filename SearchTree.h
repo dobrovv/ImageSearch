@@ -41,6 +41,11 @@ public:
 
     bool isFull() { return keys.size() >= d-1; }
 
+    /* Find the first key greater than k in this node */
+    int keyRank(int k) {
+
+    }
+
     BPNode * search(int k)
     {
         if ( isLeaf )
@@ -133,6 +138,7 @@ public:
         for ( int i = 0; i < d/2; i++ ) {
             new_node->keys.push_back(keys[0]);
             new_node->kids.push_back(kids[0]);
+            kids[0]->parent = new_node;
             keys.erase(keys.begin());
             kids.erase(kids.begin());
         }
@@ -144,6 +150,7 @@ public:
         keys.erase(keys.begin());
         kids.erase(kids.begin());
         new_node->kids.push_back(kid_left);
+        kid_left->parent = new_node;
 
         if ( parent == nullptr ) {
             parent = new BPNode(false, nullptr, d);
@@ -163,15 +170,23 @@ public:
         std::stringstream result;
         result << "{";
         for ( int i  = 0; i < keys.size(); ++i ) {
-            if ( !isLeaf )
+            if ( !isLeaf ) {
                 result << kids[i]->toString() << " " <<  keys[i] << " ";
-            else
+            } else {
                 //result << keys[i] << ": " << vals[i] << ((i == keys.size() -1 ) ? "" : ", ");
                 result << keys[i] << "*" << ((i == keys.size() -1 ) ? "" : ", ");
+            }
+
+            if ( !isLeaf && kids[i]->parent != this )
+                cout << "Wrong parent" << endl;
         }
 
-        if ( !isLeaf )
+        if ( !isLeaf ) {
             result << kids[keys.size()]->toString();
+
+            if ( !isLeaf && kids[keys.size()]->parent != this )
+                cout << "Wrong parent" << endl;
+        }
         result << "}";
         return result.str();
     }
