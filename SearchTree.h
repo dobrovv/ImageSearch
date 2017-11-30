@@ -126,7 +126,6 @@ public:
     void insertFullNode(int k, BPNode * child)
     {
         insertNonFullNode(k, child);
-
         // Split the node
         BPNode * new_node  = new BPNode(false, parent, d);
         new_node->next = this;
@@ -138,20 +137,26 @@ public:
             kids.erase(kids.begin());
         }
 
+        // remove the copied up key from the child
+        // and give it's kid to the new left node
+        int key_up = keys[0];
+        BPNode * kid_left = kids[0];
+        keys.erase(keys.begin());
+        kids.erase(kids.begin());
+        new_node->kids.push_back(kid_left);
+
         if ( parent == nullptr ) {
             parent = new BPNode(false, nullptr, d);
             new_node->parent = parent;
-            parent->keys.push_back(keys[0]);
+            parent->keys.push_back(key_up);
             parent->kids.push_back(new_node);
             parent->kids.push_back(this);
         } else if ( !parent->isFull() ) {
-            parent->insertNonFullNode(keys[0], new_node);
+            parent->insertNonFullNode(key_up, new_node);
         } else {
-            parent->insertFullNode(keys[0], new_node);
+            parent->insertFullNode(key_up, new_node);
         }
 
-        // remove the copied up key from the child
-        keys.erase(keys.begin());
     }
 
     string toString() {
