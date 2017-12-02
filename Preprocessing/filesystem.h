@@ -1,12 +1,9 @@
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
-#include <QDir>
-#include <vector>
-#include <string>
+#include "Typedefs.h"
 
-using std::string;
-using std::vector;
+#include <QDir>
 
 namespace FileSystem {
 

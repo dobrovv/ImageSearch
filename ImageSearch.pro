@@ -30,15 +30,29 @@ SOURCES += \
     MonoPixmap.cpp \
     ImageDB.cpp \
     Preprocessing/FileSystem.cpp \
-    BPlusTree.cpp
+    BPlusTree.cpp \
+    Preprocessing/FileSystem.cpp \
+    Preprocessing/ImageConverter.cpp \
+    BPlusTree.cpp \
+    ImageDB.cpp \
+    main.cpp \
+    MonoPixmap.cpp \
+    GUI/ImageView.cpp
 
 HEADERS += \
     Preprocessing/ImageConverter.h \
-    Preprocessing/FileSystem.h \
     MonoPixmap.h \
     ImageDB.h \
     Typedefs.h \
-    BPlusTree.h
+    BPlusTree.h \
+    Preprocessing/FileSystem.h \
+    Preprocessing/FileSystem.h \
+    Preprocessing/ImageConverter.h \
+    BPlusTree.h \
+    ImageDB.h \
+    MonoPixmap.h \
+    Typedefs.h \
+    GUI/ImageView.h
 
 SUBDIRS += \
     ImageSearch.pro
