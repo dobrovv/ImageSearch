@@ -1,5 +1,7 @@
 #include "ImageConverter.h"
 
+namespace ImgConv {
+
 QImage toQImage(const MonoPixmap &mp) {
     return QImage( mp.data_ptr(), mp.w(), mp.h(), QImage::Format_Grayscale8);
 }
@@ -22,4 +24,6 @@ MonoPixmap toMonoPixmap(const QImage &qimg, UInt width, UInt height) {
 MonoPixmap toMonoPixmap(std::string filepath, UInt width, UInt height) {
     QImage qimg = toQImage(filepath);
     return toMonoPixmap(qimg, width, height);
+}
+
 }

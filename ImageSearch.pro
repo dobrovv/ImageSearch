@@ -29,13 +29,16 @@ SOURCES += \
     main.cpp \
     MonoPixmap.cpp \
     ImageDB.cpp \
-    SearchTree.cpp
+    Preprocessing/FileSystem.cpp \
+    BPlusTree.cpp
 
 HEADERS += \
     Preprocessing/ImageConverter.h \
+    Preprocessing/FileSystem.h \
     MonoPixmap.h \
     ImageDB.h \
-    SearchTree.h
+    Typedefs.h \
+    BPlusTree.h
 
 SUBDIRS += \
     ImageSearch.pro

@@ -1,18 +1,7 @@
 #ifndef MONOPIXMAP_H
 #define MONOPIXMAP_H
 
-#include <cstdint>
-#include <string>
-#include <vector>
-
-#include <iostream>
-
-
-using Byte = std::uint8_t;
-using UInt = std::uint32_t;
-
-using std::string;
-using std::vector;
+#include "Typedefs.h"
 
 class MonoPixmap
 {
@@ -33,7 +22,7 @@ public:
     inline UInt h() const { return height; }
     inline UInt w() const { return width; }
 
-    inline uint8_t pixel(UInt x, UInt y) const { return data[x+y*width]; }
+    inline Byte pixel(UInt x, UInt y) const { return data[x+y*width]; }
     inline void setPixel(UInt x, UInt y, UInt pixval) { data[x+y*width] = pixval; }
     inline const Byte * data_ptr() const { return data; }
 
