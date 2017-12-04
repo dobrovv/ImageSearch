@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QScrollArea>
+#include <QGridLayout>
 
 class ImageView : public QWidget
 {
@@ -11,31 +13,36 @@ class ImageView : public QWidget
     QLabel * lblDesc;
 
 public:
-    explicit ImageView(QImage image, QString desc, QWidget *parent = nullptr);
+    explicit ImageView(QImage image = QImage(), QString desc = "", bool descInLine = false, QWidget *parent = nullptr);
 
     void setImage(QImage image, QString desc = "");
-
-signals:
-
-public slots:
-
 };
 
-class ImageGridView : public QScrolArea
+
+class ImageGridView : public QWidget
 {
     Q_OBJECT
-    QLabel * lblImg;
-    QLabel * lblDesc;
+    QGridLayout * grid;
+    int imgCount;
 
 public:
-    explicit ImageView(QImage image, QString desc, QWidget *parent = nullptr);
+    explicit ImageGridView(QWidget *parent = nullptr);
 
-    void setImage(QImage image, QString desc = "");
+    void addImage(QImage image, QString desc = "");
+    void clearImages();
+};
 
-signals:
 
-public slots:
+class ImageScrollView : public QScrollArea
+{
+    Q_OBJECT
+    ImageGridView * grid;
 
+public:
+    explicit ImageScrollView(QWidget *parent = nullptr);
+
+    void addImage(QImage image, QString desc = "");
+    void clearImages();
 };
 
 #endif // IMAGEVIEW_H

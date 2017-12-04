@@ -54,7 +54,7 @@ MonoPixmap & MonoPixmap::operator = (MonoPixmap && other)
 
     other.data = nullptr;
 
-    std::cout << "Moved" << std::flush;
+    //std::cout << "Moved" << std::flush;
     return *this;
 }
 

@@ -159,15 +159,18 @@ BPlusTree::BPlusTree(int branching_factor)
 }
 
 void BPlusTree::insert(int k, const Value &val) {
+
+    // Find the leaf node that will be inserted to
     BPlusNode * leafNode = search(k);
 
-    // If the leaf node is not full
+    // Insert the value
     if ( !leafNode->isFull() ) {
         leafNode->insertNonFullLeaf(k, val);
     } else {
         leafNode->insertFullLeaf(k, val);
     }
 
+    // Restore the root pointer
     while(root->parent != nullptr)
         root = root->parent;
 }

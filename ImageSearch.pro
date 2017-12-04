@@ -25,34 +25,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-    Preprocessing/ImageConverter.cpp \
-    main.cpp \
-    MonoPixmap.cpp \
-    ImageDB.cpp \
-    Preprocessing/FileSystem.cpp \
-    BPlusTree.cpp \
     Preprocessing/FileSystem.cpp \
     Preprocessing/ImageConverter.cpp \
     BPlusTree.cpp \
     ImageDB.cpp \
     main.cpp \
     MonoPixmap.cpp \
-    GUI/ImageView.cpp
+    GUI/ImageView.cpp \
+    GUI/MainWindow.cpp
 
 HEADERS += \
-    Preprocessing/ImageConverter.h \
-    MonoPixmap.h \
-    ImageDB.h \
-    Typedefs.h \
-    BPlusTree.h \
-    Preprocessing/FileSystem.h \
     Preprocessing/FileSystem.h \
     Preprocessing/ImageConverter.h \
     BPlusTree.h \
     ImageDB.h \
     MonoPixmap.h \
     Typedefs.h \
-    GUI/ImageView.h
+    GUI/ImageView.h \
+    GUI/MainWindow.h
 
 SUBDIRS += \
     ImageSearch.pro
@@ -82,4 +72,5 @@ DISTFILES += \
     images/targetjasperjohns.jpg \
     images/Tower-Bridge-at-night--London--England_web.jpg \
     images/uk-golf-scotland.jpg \
-    images/wallacestevens.jpg
+    images/wallacestevens.jpg \
+    screenshot.png
