@@ -1,9 +1,14 @@
+// Implementation of image database
+// uses B+ Tree to store image's information
+// all function related to image hashing and retrieval are here.
+
 #ifndef IMAGEDB_H
 #define IMAGEDB_H
 
 #include "Typedefs.h"
 #include "MonoPixmap.h"
 #include "BPlusTree.h"
+
 
 class ImageDB
 { 
@@ -25,11 +30,18 @@ public:
     vector<ImageInfo> query(const MonoPixmap & image, double tolerance = 0.05);
 
     // Compares two bitstrings according to a given tolerance
+    // using the hamming distance
     // returns true if trgt doesn't exceed the tolerance
     bool filter(Hashcode hashcode, Hashcode trgt, double tolerance);
 
     // Calculates the hash bitstring of a normalized and grayscaled image
     static Hashcode hash(const MonoPixmap & image);
+
+    //Calculates the hamming distance between two hashcodes
+    static int hamming_distance(Hashcode hashcode, Hashcode trgt);
+
+    // Calculates the length of hashcode's bitstring
+    static int length(Hashcode hashcode);
 
 private:
     // A utility function

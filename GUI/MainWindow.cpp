@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 #include "Preprocessing/ImageConverter.h"
 
+#include <ctime> // for timing
+
 #include <QGridLayout>
 #include <QPushButton>
 #include <QFileDialog>
@@ -23,6 +25,8 @@ MainWindow::MainWindow( ImageDB* db, QWidget *parent)
     spbTolerance->setRange(0,100);
     spbTolerance->setValue(25);
 
+    lblResultTxt = new QLabel("Result:");
+
     grid->addWidget(btnOpenImage, 0, 0);
     grid->addWidget(lblImageFilePath, 0, 1, 1, 4);
     grid->addWidget(new QLabel("Preview:"), 1, 0);
@@ -31,7 +35,7 @@ MainWindow::MainWindow( ImageDB* db, QWidget *parent)
     grid->addWidget(btnQueryDB, 3, 0, 1, 1);
     grid->addWidget(new QLabel("Tolerance (in %)"), 3, 1);
     grid->addWidget(spbTolerance, 3, 2);
-    grid->addWidget(new QLabel("Result:"), 4, 0);
+    grid->addWidget(lblResultTxt, 4, 0);
     grid->addWidget(resultView, 5, 0, 3, 5);
 
     grid->setSpacing(5);
@@ -52,7 +56,7 @@ void MainWindow::btnOpenImageClicked()
         queryImg = img;
         MonoPixmap mp = ImgConv::toMonoPixmap(queryImg);
         Hashcode hashcode = ImageDB::hash(mp);
-        QString desc = "Length  " + QString::number(hashcode.count())
+        QString desc = "Norm   " + QString::number(ImageDB::length(hashcode))
             + "\nBitstring   " + QString::fromStdString(hashcode.to_string());
             + "\nFilepath   " + filePath;
 
@@ -75,17 +79,25 @@ void MainWindow::btnQueryDBClicked()
     Hashcode hashcode = ImageDB::hash(mp);
 
     double tolerance = 1.0 * spbTolerance->value() / 100.0;
+
+    std::clock_t c_start = std::clock();
+
     vector<ImageInfo> result = db->query(mp, tolerance);
+
+    std::clock_t c_end = std::clock();
+
+    double elapsedTimeMs = 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC;
+
+    QString resultTxt("Result: ");
+    resultTxt += "( in " + QString::number(elapsedTimeMs, 'g') + " ms )";
+    lblResultTxt->setText(resultTxt);
 
     for (auto info : result) {
         QString filepath = QString::fromStdString(info.filepath);
-
-        int wrong_bits = 0;
-        for ( int i=0; i < BLOCK_CNT; i++ ) {
-            wrong_bits += hashcode[i] ^ info.hashcode[i]; // xor the bits in the bitsring
-        }
-
-        string desc = "Distance  " +  QString::number(wrong_bits).toStdString()
+        int distance = ImageDB::hamming_distance(hashcode, info.hashcode);
+        double difference = 1.0 * distance / BLOCK_CNT * 100;
+        string desc = + "Norm   " + QString::number(ImageDB::length(info.hashcode)).toStdString()
+                + "\t\tDistance  " +  QString::number(difference).toStdString() + "%"
                 + "\nBitstring   " + info.hashcode.to_string()
                 + "\nFilepath    " + info.filepath;
 

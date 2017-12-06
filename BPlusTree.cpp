@@ -154,7 +154,7 @@ std::string BPlusNode::toString() {
 
 
 BPlusTree::BPlusTree(int branching_factor)
-    : d(branching_factor) {
+    : d(branching_factor), N(0) {
     root = new BPlusNode(true, nullptr, d);
 }
 
@@ -163,7 +163,7 @@ void BPlusTree::insert(int k, const Value &val) {
     // Find the leaf node that will be inserted to
     BPlusNode * leafNode = search(k);
 
-    // Insert the value
+    // Insert the value into the leaf node
     if ( !leafNode->isFull() ) {
         leafNode->insertNonFullLeaf(k, val);
     } else {
@@ -173,4 +173,6 @@ void BPlusTree::insert(int k, const Value &val) {
     // Restore the root pointer
     while(root->parent != nullptr)
         root = root->parent;
+
+    N += 1; // elements count
 }

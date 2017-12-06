@@ -19,6 +19,7 @@ class MainWindow : public QWidget
     ImageScrollView * resultView;
 
     QLabel * lblImageFilePath;
+    QLabel * lblResultTxt;
 
     QPushButton * btnOpenImage;
     QPushButton * btnQueryDB;

@@ -1,3 +1,10 @@
+// Implementation of B+ Tree
+// supports key dublicates
+// The tree was designed to produce the same result as the visualisation
+//   at https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html
+// Insertion algorithm description taken from
+//  http://www.cburch.com/cs/340/reading/btree/index.html
+
 #ifndef BPLUSTREE_H
 #define BPLUSTREE_H
 
@@ -70,7 +77,8 @@ public:
 class BPlusTree {
 
 public:
-    int d;
+    int d; // branching factor
+    int N; // number of children
     BPlusNode * root;
 
 public:

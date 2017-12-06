@@ -1,3 +1,5 @@
+// Class to store image's pixel data after preprocessin
+
 #ifndef MONOPIXMAP_H
 #define MONOPIXMAP_H
 
@@ -26,8 +28,8 @@ public:
     inline void setPixel(UInt x, UInt y, UInt pixval) { data[x+y*width] = pixval; }
     inline const Byte * data_ptr() const { return data; }
 
-    /// Returns a new MonoPixmap containing a subregion of image's pixels
-    /// No boundary checks
+    // Returns a new MonoPixmap containing a subregion of image's pixels
+    // No boundary checks
     MonoPixmap region (UInt x, UInt y, UInt rwidth, UInt rheight);
 
     string toString() const;

@@ -4,38 +4,41 @@
 #include "Preprocessing/FileSystem.h"
 #include "GUI/MainWindow.h"
 
-#include <QtWidgets>
-
+#include <QtWidgets/QApplication>
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
 
     ImageDB db;
-    vector<ImageInfo> result;
+
+    // load images
     db.loadImagesFromDir("images");
-    MonoPixmap mp = ImgConv::toMonoPixmap("C:/Dev/Projects/Qt/ImageSearchReleaseBuild/images/architecture1.jpg");
 
-    cout << "Query Hashcode" << ImageDB::hash(mp) << endl;
-    result = db.query(mp, 1);
-
-    for (auto t : result) {
-        cout << t.filepath << endl;
-    }
-
+    // Display the gui
     QApplication app(argc, argv);
-
     MainWindow * mw = new MainWindow(&db);
+    mw->show();
+
+    return app.exec();
+}
+
+
+//    vector<ImageInfo> result;
+//    db.loadImagesFromDir("images");
+//    MonoPixmap mp = ImgConv::toMonoPixmap("C:/Dev/Projects/Qt/ImageSearchReleaseBuild/images/architecture1.jpg");
+//    cout << "Query Hashcode " << ImageDB::hash(mp) << endl;
+//    result = db.query(mp, 1);
+
+//    for (auto t : result) {
+//        cout << t.filepath << endl;
+//    }
 
 //    ImageScrollView * v = new ImageScrollView();
 //    for (auto t : result) {
 //        QString filepath = QString::fromStdString(t.filepath);
 //        v->addImage(QImage(filepath), filepath);
 //    }
-
-    mw->show();
-
-    return app.exec();
 
 //    BPlusTree t;
 //    t.insert(1, 101);
@@ -55,4 +58,3 @@ int main(int argc, char *argv[]) {
 //    t.insert(8, 109);
 //    cout << endl << t.root->toString() << endl;
 //    cout << t.search(3)->toString();
-}
