@@ -10,9 +10,7 @@
 
 #include "Typedefs.h"
 
-#include <sstream>
-#include <iterator>
-
+using Key   = int;
 using Value = ImageInfo;
 
 class BPlusNode {
@@ -20,19 +18,16 @@ class BPlusNode {
 public:
     friend class BPlusTree;
 
-    int d;  // branching factor
+    unsigned int d;  // branching factor
     bool isLeaf;
 
-    vector<int> keys;
+    vector<Key> keys;
 
     BPlusNode * parent;
-    vector<BPlusNode*> kids; // child nodes
+    BPlusNode * next;
 
-    // TODO? : these parameters can be stored in kids vector
-    BPlusNode * next;  // pointer to the next leaf node
-    vector<Value> vals;  // associated leaf values
-
-    BPlusNode * prev; // pointer to the previous leaf node
+    vector<BPlusNode*> kids; // TODO child nodes either a BPlusNode * or a Value
+    vector<Value> vals;
 
 public:
     BPlusNode( bool isLeaf = false, BPlusNode* parent = nullptr, int d = 4);
@@ -41,33 +36,15 @@ public:
 
     /* Finds the number of keys smaller than k in this node
        returns the index of this key in keys */
-    int keyRank(int k) {
-        int i = 0;
+    int keyRank(const Key & k);
+    /* Look for the node*/
+    BPlusNode * search(Key k);
+    void insert(const Key & key, const Value & val);
 
-        while (i < keys.size() && keys[i] < k )
-            i++;
-
-        return i;
-    }
-
-    BPlusNode * search(int k);
-
-private:
-    // A utility function
-    // The leaf must be non-full when this function is called
-    void insertNonFullLeaf(int k, const Value& val);
-
-    // A utility function
-    // The leaf must be full when this function is called
-    void insertFullLeaf(int k, const Value& val);
-
-    // A utility function
-    // The root or an inner node must be non full when this function is called
-    int insertNonFullNode(int k, BPlusNode * child);
-
-    // A utility function
-    // The root or an inner node must be full when this function is called
-    void insertFullNode(int k, BPlusNode * child);
+//private:
+    void insertLeaf(const Key &key, const Value & val);
+    void insertNonLeaf(const Key &key, BPlusNode * node);
+    BPlusNode * splitNode(BPlusNode * node);
 
 public:
     string toString();
@@ -75,19 +52,18 @@ public:
 };
 
 class BPlusTree {
-
 public:
-    int d; // branching factor
-    int N; // number of children
+//private:
     BPlusNode * root;
+    unsigned int d; // branching factor
 
 public:
-    BPlusTree(int branching_factor=4);
+    BPlusTree(unsigned int branching_factor = 4);
+    void insert(const Key & key, const Value & val);
 
-    inline BPlusNode * search(int k) { return root->search(k); }
-    void insert(int k, const Value & val = Value());
-
-    string toString() {return root->toString();}
+    inline BPlusNode * search(const Key & key) {return root->search(key);}
+    inline string toString() {return root->toString();}
 };
+
 
 #endif // BPLUSTREE_H

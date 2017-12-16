@@ -1,7 +1,8 @@
 #include "BPlusTree.h"
+#include <sstream>
 
 BPlusNode::BPlusNode(bool isLeaf, BPlusNode *parent, int d)
-    : d(d), isLeaf(isLeaf), parent(parent), next(nullptr), prev(nullptr)
+    : d(d), isLeaf(isLeaf), parent(parent), next(nullptr)
 {
     keys.reserve(d-1);
 
@@ -12,117 +13,123 @@ BPlusNode::BPlusNode(bool isLeaf, BPlusNode *parent, int d)
     }
 }
 
+int BPlusNode::keyRank(const Key &k) {
+    int i = 0;
+
+    while (i < keys.size() && keys[i] < k )
+        i++;
+
+    return i;
+}
+
 BPlusNode * BPlusNode::search(int k)
 {
     if ( isLeaf )
         return this;
 
     // Find the location of the key
-    int i = keyRank(k);
+    int i = 0;
+
+    while (i < keys.size() && keys[i] <= k )
+        i++;
 
     // Go to the appropriate child
     return kids[i]->search(k);
 }
 
-void BPlusNode::insertNonFullLeaf(int k, const Value &val)
-{
-    // Finds the location of new key to be inserted
-    int i = keyRank(k);
+void BPlusNode::insert(const Key & key, const Value & val) {
+    // Find the proper leaf node
+    BPlusNode * leaf_node = search(key);
 
-    keys.insert(keys.begin()+i,k);
-    vals.insert(vals.begin()+i,val);
-
+    // Insert the key
+    leaf_node->insertLeaf(key, val);
 }
 
-void BPlusNode::insertFullLeaf(int k, const Value &val)
+BPlusNode * BPlusNode::splitNode(BPlusNode *left_part)
 {
-    // Inserts the new (key,value) pair
-    insertNonFullLeaf(k, val);
+    BPlusNode * right_part = new BPlusNode(left_part->isLeaf, left_part->parent, left_part->d);
 
-    // Split the node
-    // this node represents right part of the split
-    BPlusNode * left_node  = new BPlusNode(true, parent, d);
-    if (this->prev) {
-        BPlusNode * old_prev = this->prev;
-        old_prev->next = left_node;
-        left_node->prev = old_prev;
+    if (left_part->next) {
+        right_part->next = this->next;
     }
-    left_node->next = this;
-    this->prev = left_node;
+
+    left_part->next = right_part;
 
     for ( int i = 0; i < d/2; i++ ) {
-        left_node->keys.push_back(keys[0]);
-        left_node->vals.push_back(vals[0]);
-        keys.erase(keys.begin());
-        vals.erase(vals.begin());
+
+        right_part->keys.insert(right_part->keys.begin(), left_part->keys.back());
+        left_part->keys.pop_back();
+
+        if ( left_part->isLeaf ) {
+            right_part->vals.insert(right_part->vals.begin(), left_part->vals.back());
+            left_part->vals.pop_back();
+        } else {
+            right_part->kids.insert(right_part->kids.begin(), left_part->kids.back());
+            left_part->kids.pop_back();
+            right_part->kids.front()->parent = right_part;
+        }
     }
+
+    return right_part;
+}
+
+
+void BPlusNode::insertLeaf(const Key &key, const Value & val) {
+
+    // Finds the location of new key to be inserted
+    int i = keyRank(key);
+
+    keys.insert(keys.begin()+i, key);
+    vals.insert(vals.begin()+i, val);
+
+    if ( keys.size() < d )
+        return;
+
+    // Split the node
+    // this node represents the left part of the split
+    BPlusNode * right_node  = splitNode(this);
+
 
     if ( parent == nullptr ) {
         this->parent = new BPlusNode(false, nullptr, d);
-        left_node->parent = this->parent;
-
-        parent->keys.push_back(keys[0]);
-        parent->kids.push_back(left_node);
+        right_node->parent = this->parent;
         parent->kids.push_back(this);
-
-    } else if ( !parent->isFull() ) {
-        parent->insertNonFullNode(keys[0], left_node);
+        parent->keys.push_back(right_node->keys[0]);
+        parent->kids.push_back(right_node);
     } else {
-        parent->insertFullNode(keys[0], left_node);
+        parent->insertNonLeaf(right_node->keys[0], right_node);
     }
+
 }
 
-int BPlusNode::insertNonFullNode(int k, BPlusNode *child)
+void BPlusNode::insertNonLeaf(const Key &key, BPlusNode *node)
 {
     // Finds the location of new key to be inserted
-    int i = keyRank(k);
+    int i = keyRank(key);
 
-    keys.insert(keys.begin()+i, k);
-    kids.insert(kids.begin()+i, child);
+    keys.insert(keys.begin()+i, key);
+    kids.insert(kids.begin()+i+1, node);
 
-    return i;
-}
-
-void BPlusNode::insertFullNode(int k, BPlusNode *child)
-{
-    insertNonFullNode(k, child);
+    if ( keys.size() < d )
+        return;
 
     // Split the node
-    // this node represents right part of the split
-    BPlusNode * left_node  = new BPlusNode(false, parent, d);
+    // this node represents the left part of the split
+    BPlusNode * right_node  = splitNode(this);
 
-    for ( int i = 0; i < d/2; i++ ) {
-        left_node->keys.push_back(keys[0]);
-        left_node->kids.push_back(kids[0]);
-        kids[0]->parent = left_node;
-        keys.erase(keys.begin());
-        kids.erase(kids.begin());
-    }
-
-    // Remove a key that gets up to the parent
-    // and give its left child node to the left part of the splited node
-    int key_up = keys[0];
-    BPlusNode * kid_left = kids[0];
-
-    left_node->kids.push_back(kid_left);
-    kid_left->parent = left_node;
-
-    keys.erase(keys.begin());
-    kids.erase(kids.begin());
+    // Pop the first key of the right node
+    Key key_up = right_node->keys[0];
+    right_node->keys.erase(right_node->keys.begin());
 
 
     if ( parent == nullptr ) {
-        parent = new BPlusNode(false, nullptr, d);
-        left_node->parent = parent;
-        parent->keys.push_back(key_up);
-        parent->kids.push_back(left_node);
+        this->parent = new BPlusNode(false, nullptr, d);
+        right_node->parent = this->parent;
         parent->kids.push_back(this);
-
-    } else if ( !parent->isFull() ) {
-        parent->insertNonFullNode(key_up, left_node);
-
+        parent->keys.push_back(key_up);
+        parent->kids.push_back(right_node);
     } else {
-        parent->insertFullNode(key_up, left_node);
+        parent->insertNonLeaf(key_up, right_node);
     }
 }
 
@@ -138,41 +145,31 @@ std::string BPlusNode::toString() {
         }
 
         if ( !isLeaf && kids[i]->parent != this )
-            cout << "Wrong parent" << endl;
+            std::cout << "Wrong parent" << std::endl;
     }
 
     if ( !isLeaf ) {
         result << kids[keys.size()]->toString();
 
         if ( !isLeaf && kids[keys.size()]->parent != this )
-            cout << "Wrong parent" << endl;
+            std::cout << "Wrong parent" << std::endl;
     }
     result << "}";
     return result.str();
 }
 
 
-
-BPlusTree::BPlusTree(int branching_factor)
-    : d(branching_factor), N(0) {
+BPlusTree::BPlusTree(unsigned int branching_factor)
+    : d(branching_factor)
+{
     root = new BPlusNode(true, nullptr, d);
 }
 
-void BPlusTree::insert(int k, const Value &val) {
+void BPlusTree::insert(const Key &key, const Value &val)
+{
+    root->insert(key, val);
 
-    // Find the leaf node that will be inserted to
-    BPlusNode * leafNode = search(k);
-
-    // Insert the value into the leaf node
-    if ( !leafNode->isFull() ) {
-        leafNode->insertNonFullLeaf(k, val);
-    } else {
-        leafNode->insertFullLeaf(k, val);
-    }
-
-    // Restore the root pointer
-    while(root->parent != nullptr)
+    while(root->parent)
         root = root->parent;
-
-    N += 1; // elements count
 }
+

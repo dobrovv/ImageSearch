@@ -75,4 +75,6 @@ DISTFILES += \
     images/Tower-Bridge-at-night--London--England_web.jpg \
     images/uk-golf-scotland.jpg \
     images/wallacestevens.jpg \
-    screenshot.png
+    screenshot.png \
+    BlockHashing.pdf \
+    NB+Tree.pdf
