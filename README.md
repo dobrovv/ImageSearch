@@ -1,10 +1,12 @@
 # ImageSearch
 An imaging alrotighm implementing content-based image retrieval (CBIR) by creating a similarity graph of a dataset and by retriving stored image hashes from a B+ tree.
 
-For the description of the algorithm see [NB+Tree.pdf](https://github.com/dobrovv/ImageSearch/blob/master/NB%2BTree.pdf)
-
 # UI
 
-The Qt based UI for the project allows to find and rank similar images in a dataset based on an image prompt and tolerance.
+The Qt based UI for the project allows finding and ranking similar images in a dataset based on an image prompt and a tolerance.
 
 ![UI screenshot](https://github.com/dobrovv/ImageSearch/blob/master/screenshot.png)
+
+# References
+
+[NB+Tree.pdf](https://github.com/dobrovv/ImageSearch/blob/master/NB%2BTree.pdf) description of the imaging algorithm.
