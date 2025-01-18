@@ -1,7 +1,7 @@
 # ImageSearch
 An imaging alrotighm implementing content-based image retrieval (CBIR) by creating a similarity graph of a dataset and by retriving stored image hashes from a B+ tree.
 
-For the description of the algorithm see https://github.com/dobrovv/ImageSearch/blob/master/NB%2BTree.pdf
+For the description of the algorithm see [NB+Tree.pdf](https://github.com/dobrovv/ImageSearch/blob/master/NB%2BTree.pdf)
 
 # UI
 
