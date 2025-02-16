@@ -1,5 +1,5 @@
 # ImageSearch
-An imaging alrotighm implementing content-based image retrieval (CBIR) by creating a similarity graph of a dataset and by retriving stored image hashes from a B+ tree.
+An imaging alrotighm implementing content-based image retrieval (CBIR) by creating a similarity graph of a dataset and by retriving image hashkeys stored in a B+ tree.
 
 # UI
 
